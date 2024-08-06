@@ -1,65 +1,49 @@
 import Image from 'next/image';
-import MotionDiv from './MotionDiv';
+import { Dispatch, SetStateAction } from 'react';
+import { AnimeProp } from './AnimeCard';
 
-export interface AnimeProp {
-    id: string;
-    name: string;
-    image: {
-        original: string;
-    };
-    kind: string;
-    episodes: number;
-    episodes_aired: number;
-    score: string;
-    aired_on: string;
-    released_on: string;
-}
-
-export interface AnimeProp {
+interface Props {
     anime: AnimeProp;
-    index: number;
+    closePopup: Dispatch<SetStateAction<boolean>>;
 }
 
-const variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-};
+const AnimePopup = ({ anime, closePopup }: Props) => {
+    const close = (e: any) => {
+        if (e.target.id === 'anime-modal') {
+            closePopup(() => false);
+        }
+    };
 
-function AnimeCard({ anime, index }: AnimeProp) {
     return (
-        <>
-            <MotionDiv
-                variants={variants}
-                initial='hidden'
-                animate='visible'
-                transition={{
-                    delay: index * 0.25,
-                    ease: 'easeInOut',
-                    duration: 0.5,
-                }}
-                viewport={{ amount: 0 }}
-                anime={anime}
-                className='max-w-sm rounded relative w-full'
-            >
-                <div className='relative w-full h-[37vh]'>
+        <section
+            onClick={close}
+            id='anime-modal'
+            className='fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50'
+        >
+            <section className='bg-black rounded-lg shadow-lg p-8 z-50 flex flex-col justify-center'>
+                <div className='flex flex-col gap-2'>
                     <Image
                         src={`https://shikimori.one${anime.image.original}`}
                         alt={anime.name}
-                        fill
-                        sizes={''}
-                        className='rounded-xl hover:cursor-pointer'
+                        height={200}
+                        width={200}
+                        className='rounded-xl max-w-md'
                     />
+                    <section className='flex flex-col gap-2'>
+                        <div className='py-1 px-2'>
+                            <p className='text-white text-sm font-bold capitalize'>
+                                {anime.kind}
+                            </p>
+                        </div>
+                        <p>Released: {anime.released_on}</p>
+                        <p>Aired: {anime.aired_on}</p>
+                    </section>
                 </div>
                 <div className='py-4 flex flex-col gap-3'>
                     <div className='flex justify-between items-center gap-1'>
                         <h2 className='font-bold text-white text-xl line-clamp-1 w-full'>
                             {anime.name}
                         </h2>
-                        <div className='py-1 px-2 bg-[#161921] rounded-sm'>
-                            <p className='text-white text-sm font-bold capitalize'>
-                                {anime.kind}
-                            </p>
-                        </div>
                     </div>
                     <div className='flex gap-4 items-center'>
                         <div className='flex flex-row gap-2 items-center'>
@@ -88,9 +72,9 @@ function AnimeCard({ anime, index }: AnimeProp) {
                         </div>
                     </div>
                 </div>
-            </MotionDiv>
-        </>
+            </section>
+        </section>
     );
-}
+};
 
-export default AnimeCard;
+export default AnimePopup;
